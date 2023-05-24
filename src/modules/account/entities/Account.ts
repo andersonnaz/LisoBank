@@ -1,4 +1,6 @@
 import { Cpf } from "../../person/entities/Cpf";
+import { ValidateAccountPasswordError } from "../error/ValidateAccountPassword";
+import { ValidateAccountTypeError } from "../error/ValidateAccountTypeError";
 
 export enum AccountType {
     SavingsAccount = "Savings Account",
@@ -23,6 +25,7 @@ export class Account {
     }
 
     static create(cpf: string, accountType: AccountType, password: number): Account {
+        this.validate(cpf, accountType, password);
         return new Account(cpf, accountType, password);
     }
 
@@ -48,5 +51,15 @@ export class Account {
 
     private generateAccountNumber(): number {
         return Math.floor(Math.random() * 10_000);
+    }
+
+    private static validate(cpf: string, accountType: AccountType, password: number): void {
+        Cpf.validate(cpf);
+        if(!accountType) {
+            throw new ValidateAccountTypeError();
+        }
+        if(!password) {
+            throw new ValidateAccountPasswordError();
+        }
     }
 }

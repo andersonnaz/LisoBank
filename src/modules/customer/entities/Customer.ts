@@ -1,8 +1,8 @@
 import { Account } from '../../account/entities/Account';
 import { Cpf } from '../../person/entities/Cpf';
 import { Person } from '../../person/entities/Person';
-import { ValidateAddressCustomerError } from '../error/ValidateAddressCustomerError';
-import { ValidateNameCustomerError } from '../error/ValidateNameCustomerError';
+import { ValidateAddressError } from '../error/ValidateAddressError';
+import { ValidateNameError } from '../error/ValidateNameError';
 
 export class Customer extends Person {
     private _accounts: Array<Account>;
@@ -18,20 +18,12 @@ export class Customer extends Person {
     }
 
     private static validate(name: string, address: string) {
-        // if(!name){
-        //     throw new ValidateNameCustomerError({
-        //         name: "INVALID_NAME",
-        //         message: "name is empty",
-        //         cause: undefined,
-        //     })
-        // };
-        // if(!address){
-        //     throw new ValidateAddressCustomerError({
-        //         name: "INVALID_ADDRESS",
-        //         message: "address is empty",
-        //         cause: undefined,
-        //     })
-        // }
+        if(!name){
+            throw new ValidateNameError();
+        };
+        if(!address){
+            throw new ValidateAddressError();
+        }
     }
     
     public addAccount(account: Account): void {

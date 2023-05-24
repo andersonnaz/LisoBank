@@ -9,28 +9,28 @@ export class CustomerService {
         this._repository = repository;
     };
 
-    create(name: string, cpf: string, adress: string): Customer{
+    async create(name: string, cpf: string, adress: string): Promise<Customer>{
         const cpfCustomer = Cpf.create(cpf);
         const customer = Customer.create(name, cpfCustomer, adress);
-        const result = this._repository.insert(customer);
+        const result = await this._repository.insert(customer);
         return result;
     }
 
-    list(): Customer[] {
-        return this._repository.list();
+    async list(): Promise<Customer[]> {
+        return await this._repository.list();
     }
 
-    delete(cpf: string): string {
-        return this._repository.delete(cpf);
+    async delete(cpf: string): Promise<string> {
+        return await this._repository.delete(cpf);
     }
 
-    findByCpf(cpf: string): Customer | undefined{
-        const result = this._repository.find(cpf);
+    async findByCpf(cpf: string): Promise<Customer | undefined>{
+        const result = await this._repository.find(cpf);
         return result;
     }
 
-    updateAddress(cpf: string, newAddress: string): Customer {
-        const result = this._repository.update(cpf, newAddress);
+    async updateAddress(cpf: string, newAddress: string): Promise<Customer> {
+        const result = await this._repository.update(cpf, newAddress);
         return result;
     }
 }

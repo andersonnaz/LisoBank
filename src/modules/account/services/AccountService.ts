@@ -1,12 +1,13 @@
-import { Repository, TransactionRepository } from "../../../shared/database/Repository";
+import { Repository } from "../../../shared/database/Repository";
 import { Customer } from "../../customer/entities/Customer";
 import { Account, AccountType } from "../entities/Account";
+import { AccountRepository } from "../repositories/AccountRepository";
 
 export class AccountService {
-    private readonly _accountRepository: Repository<Account> & TransactionRepository;
+    private readonly _accountRepository: AccountRepository;
     private readonly _customerRepository: Repository<Customer>;
 
-    constructor(accountRepository: Repository<Account> & TransactionRepository, customerRepository: Repository<Customer>){
+    constructor(accountRepository: AccountRepository, customerRepository: Repository<Customer>){
         this._accountRepository = accountRepository;
         this._customerRepository = customerRepository;
     };
@@ -49,8 +50,8 @@ export class AccountService {
         return 'deposit successful!'
     }
 
-    transfer(accountNumberSend: string, money: number, accountNumberReceived: string): string {
-        this._accountRepository.transfer(accountNumberSend, money, accountNumberReceived);
-        return 'transfer successful!'
-    }
+    // transfer(accountNumberSend: string, money: number, accountNumberReceived: string): string {
+    //     this._accountRepository.transfer(accountNumberSend, money, accountNumberReceived);
+    //     return 'transfer successful!'
+    // }
 }

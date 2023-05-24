@@ -1,7 +1,7 @@
 import { Account } from "../entities/Account";
-import { Repository, TransactionRepository } from "../../../shared/database/Repository";
+import { AccountRepository } from "./AccountRepository";
 
-class AccountInMemoryRepository implements Repository<Account>, TransactionRepository {
+class AccountInMemoryRepository implements AccountRepository {
     private _database: Account[] = [];
 
     insert(account: Account): Account {
@@ -53,18 +53,18 @@ class AccountInMemoryRepository implements Repository<Account>, TransactionRepos
         }
         account.balance += money;
     }
-
-    transfer(accountNumberSend: string, money: number, accountNumberReceived: string): void {
-        const accountSend = this.find(accountNumberSend);
-        if(!accountSend){
-            throw new Error('Account send not found');
-        }
-        if(accountSend.balance < money) {
-            throw new Error('insufficcient balance');
-        }
-        this.withdrawal(accountNumberSend, money);
-        this.deposit(accountNumberReceived, money);
-    }
+    //criar um service pra transfer
+    // transfer(accountNumberSend: string, money: number, accountNumberReceived: string): void {
+    //     const accountSend = this.find(accountNumberSend);
+    //     if(!accountSend){
+    //         throw new Error('Account send not found');
+    //     }
+    //     if(accountSend.balance < money) {
+    //         throw new Error('insufficcient balance');
+    //     }
+    //     this.withdrawal(accountNumberSend, money);
+    //     this.deposit(accountNumberReceived, money);
+    // }
 }
 
 export default new AccountInMemoryRepository();

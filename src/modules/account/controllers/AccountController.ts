@@ -2,62 +2,77 @@ import { Request, Response } from "express";
 import { AccountService } from "../services/AccountService";
 import AccountInMemoryRepository from "../repositories/AccountInMemoryRepository";
 import CustomerInMemoryRepository from "../../customer/repositories/CustomerInMemoryRepository";
+import { TransferMoneyTransaction } from "../utils/TransferMoneyTransaction";
+import { AbstractController } from "../../../shared/AbstractController";
 
-export class AccountController {
+export class AccountController extends AbstractController {
     private readonly _accountService: AccountService;
+    private readonly _transferMoneyTransaction: TransferMoneyTransaction;
 
     constructor(){
+        super()
         this._accountService = new AccountService(AccountInMemoryRepository, CustomerInMemoryRepository);
+        this._transferMoneyTransaction = new TransferMoneyTransaction(AccountInMemoryRepository);
     };
 
-    create(request: Request, response: Response): Response{
-        const {cpf, accountType, password} = request.body;
-        const result = this._accountService.create(cpf, accountType, password);
-        return response.status(200).json(result);        
+    create = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            const {cpf, accountType, password} = request.body;
+            return this._accountService.create(cpf, accountType, password);
+        })
     };
 
-    list(request: Request, response: Response): Response{
-        const result = this._accountService.list();
-        return response.status(200).json(result);
+    list = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            return this._accountService.list();
+
+        })
     };
 
-    findByAccountNumber(request: Request, response: Response): Response{
-        const {accountNumber} = request.params;
-        const result = this._accountService.findByAccountNumber(accountNumber);
-        return response.status(200).json(result);
+    findByAccountNumber = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            const {accountNumber} = request.params;
+            return this._accountService.findByAccountNumber(accountNumber);
+        })
     };
 
-    delete(request: Request, response: Response): Response {
-        const {accountNumber} = request.params;
-        const result = this._accountService.delete(accountNumber);
-        return response.status(200).json(result);
+    delete = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            const {accountNumber} = request.params;
+            return this._accountService.delete(accountNumber);
+        })
     };
     
-    updatePassword(request: Request, response: Response): Response {
-        const {accountNumber} = request.params;
-        const {newPassword} = request.body;
-        const result = this._accountService.updatePassword(accountNumber, newPassword);
-        return response.status(200).json(result);
+    updatePassword = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            const {accountNumber} = request.params;
+            const {newPassword} = request.body;
+            return this._accountService.updatePassword(accountNumber, newPassword);
+
+        })
     };
 
-    withdrawal(request: Request, response: Response): Response {
-        const {accountNumber} = request.params;
-        const {money} = request.body;
-        const result = this._accountService.withdrawal(accountNumber, money);
-        return response.status(200).json(result);
-    }
+    withdrawal = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            const {accountNumber} = request.params;
+            const {money} = request.body;
+            return this._accountService.withdrawal(accountNumber, money);
+        })
+    };
     
-    deposit(request: Request, response: Response): Response {
-        const {accountNumber} = request.params;
-        const {money} = request.body;
-        const result = this._accountService.deposit(accountNumber, money);
-        return response.status(200).json(result);
-    }
+    deposit = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            const {accountNumber} = request.params;
+            const {money} = request.body;
+            return this._accountService.deposit(accountNumber, money);  
+        })
+    };
     
-    transfer(request: Request, response: Response): Response {
-        const {accountNumber} = request.params;
-        const {money, accountNumberReceived} = request.body;
-        const result = this._accountService.transfer(accountNumber, money, accountNumberReceived);
-        return response.status(200).json(result);
-    }
+    transfer = async (request: Request, response: Response): Promise<Response> => {
+        return this.handle(request, response, async () => {
+            const {accountNumber} = request.params;
+            const {money, accountNumberReceived} = request.body;
+            return this._transferMoneyTransaction.transfer(accountNumber, money, accountNumberReceived);      
+        })
+    };
 }

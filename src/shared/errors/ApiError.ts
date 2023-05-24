@@ -6,10 +6,3 @@ export class ApiError extends Error {
         this.statusCode = statusCode;
     };
 }
-
-export class BadRequest extends ApiError {
-
-    constructor(message: string){
-        super(message, 400);
-    };
-}

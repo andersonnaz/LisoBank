@@ -1,41 +1,56 @@
+import { AbstractController } from "../../../shared/AbstractController";
 import CustomerInMemoryRepository from "../repositories/CustomerInMemoryRepository";
 import { CustomerService } from "../services/CustomerService";
 import { Request, Response } from "express";
 
-export class CustomerController {
-    private readonly _customerService: CustomerService;
+export class CustomerController extends AbstractController {
+  private readonly _customerService: CustomerService;
 
-    constructor(){
-        this._customerService = new CustomerService(CustomerInMemoryRepository);
-    }
+  constructor() {
+    super();
+    this._customerService = new CustomerService(CustomerInMemoryRepository);
+  }
+//template method (pattern)
+  list = async (request: Request, response: Response): Promise<Response> => {
+    return this.handle(request, response, async () => {
+      return this._customerService.list();
+    })
+  };
 
-    list(request: Request, response: Response): Response{
-        const result = this._customerService.list();
-        return response.json(result);
-    }
+  create = async (request: Request, response: Response): Promise<Response> => {
+    return this.handle(request, response, async () => {
+        const { name, cpf, adress } = request.body;
+        return this._customerService.create(name, cpf, adress);
+    });
+  };
 
-    create(request: Request, response: Response): Response {
-        const {name, cpf, adress} = request.body;
-        const result = this._customerService.create(name, cpf, adress);
-        return response.status(200).json(result);
-    }
+  delete = async (request: Request, response: Response): Promise<Response> => {
+    return this.handle(request, response, async () => {
+      const { cpf } = request.params;
+      return this._customerService.delete(cpf);
+    })
+  };
 
-    delete(request: Request, response: Response): Response {
-        const {cpf} = request.params;
-        const result = this._customerService.delete(cpf);
-        return response.status(200).json(result);
-    }
+  findByCpf = async (
+    request: Request,
+    response: Response
+  ): Promise<Response> => {
+    return this.handle(request, response, async () => {
+      const { cpf } = request.params;
+      return this._customerService.findByCpf(cpf);
+      
+    })
+  };
 
-    findByCpf(request: Request, response: Response): Response {
-        const {cpf} = request.params;
-        const result = this._customerService.findByCpf(cpf);
-        return response.status(200).json(result);
-    }
+  updateAddres = async (
+    request: Request,
+    response: Response
+  ): Promise<Response> => {
+    return this.handle(request, response, async () => {
+      const { cpf } = request.params;
+      const { adress } = request.body;
+      return this._customerService.updateAddress(cpf, adress);
 
-    updateAddres(request: Request, response: Response): Response {
-        const {cpf} = request.params;
-        const {adress} = request.body;
-        const result = this._customerService.updateAddress(cpf, adress);
-        return response.status(200).json(result);
-    }
+    })
+  };
 }

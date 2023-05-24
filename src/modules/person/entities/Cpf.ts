@@ -14,11 +14,10 @@ export class Cpf {
         return this._number;
     }
 
-    public static validate(number: string): string {
+    public static validate(number: string): void {
         if(!REGEX_VALIDATE_CPF.test(number)){
             throw new ValidateCpfError();
         }
-        return number;
     }
 
     public static create(number: string): Cpf {
