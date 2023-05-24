@@ -1,3 +1,4 @@
+import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { Account } from "../entities/Account";
 import { AccountRepository } from "./AccountRepository";
 
@@ -14,29 +15,33 @@ class AccountInMemoryRepository implements AccountRepository {
     }
 
     delete(accountNumber: string): string {
-        this._database = this._database.filter((account) => {
+        const newArray = this._database.filter((account) => {
             return account.accountNumber === parseInt(accountNumber);
         })
+        if(newArray.length === 0){
+            throw new NotFoundError('account Not Found');
+        }
         return 'deleted account';
     }
 
-    find(accountNumber: string): Account | undefined {
-        return this._database.find((account) => {
+    find(accountNumber: string): Account {
+        const account = this._database.find((account) => {
             return account.accountNumber === parseInt(accountNumber);
         })
+        if(!account) {
+            throw new NotFoundError('account not found');
+        }
+        return account;
     }
 
     update(accountNumber: string, newPassword: string): Account {
         const account = this.find(accountNumber);
-        account?.changePassword(parseInt(newPassword));
+        account.changePassword(parseInt(newPassword));
         return account as Account;
     }
 
     withdrawal(accountNumber: string, money: number): void {
         const account = this.find(accountNumber);
-        if(!account){
-            throw new Error('account not found');
-        }
         if(account.balance < money) {
             throw new Error('insufficcient balance');
         }
@@ -45,9 +50,6 @@ class AccountInMemoryRepository implements AccountRepository {
 
     deposit(accountNumber: string, money: number): void {
         const account = this.find(accountNumber);
-        if(!account){
-            throw new Error('account not found');
-        }
         if(money <= 0) {
             throw new Error('Invalid deposit value');
         }

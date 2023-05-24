@@ -1,5 +1,6 @@
 import { Customer} from "../entities/Customer";
 import { Repository } from "../../../shared/database/Repository";
+import { NotFoundError } from "../../../shared/errors/NotFoundError";
 
 
 class CustomerInMemoryRepository implements Repository<Customer>{
@@ -16,16 +17,22 @@ class CustomerInMemoryRepository implements Repository<Customer>{
 
     delete(cpf: string): string {
         const customers = this._database;
-        this._database = customers.filter((customer) => {
+        const newCustomers = customers.filter((customer) => {
            return customer.cpf.number !== cpf;
         })
+        if(newCustomers.length === 0) {
+            throw new NotFoundError('customer not found');
+        }
         return 'Customer deleted!';
     }
 
-    find(cpf: string): Customer{
+    find(cpf: string): Customer {
         const customer = this._database.find((customer) => {
            return customer.cpf.number === cpf;
         })
+        if(!customer) {
+            throw new NotFoundError('customer not found');
+        }
         return customer as Customer;
     }
 

@@ -1,4 +1,3 @@
-import { Cpf } from "../../person/entities/Cpf";
 import { Customer } from "../entities/Customer";
 
 export class CustomerRepository {
